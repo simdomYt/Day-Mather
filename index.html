@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mother's Day Special</title>
+    <title>Mother's Day Special ❤️</title>
     <style>
         :root {
             --neon: #ff0055;
+            --gold: #ffd700;
             --bg: #050005;
+            --transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -24,114 +26,165 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white;
         }
 
-        canvas {
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        /* Меню налаштувань */
-        #menu {
+        /* --- ЕКРАНИ ТА АНІМАЦІЯ ПЕРЕХОДІВ --- */
+        .screen {
             position: absolute;
-            z-index: 100;
-            background: rgba(5, 0, 5, 0.95);
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.4s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.1);
+            transition: var(--transition);
+            z-index: 10;
         }
 
-        .menu-card {
-            width: 85%;
-            max-width: 300px;
-            text-align: center;
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
         }
 
-        h2 {
-            color: white;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px var(--neon);
-            letter-spacing: 2px;
+        /* --- СТИЛІ ЕЛЕМЕНТІВ МЕНЮ --- */
+        h2 { 
+            margin-bottom: 30px; 
+            text-shadow: 0 0 15px var(--neon); 
+            letter-spacing: 2px; 
+            font-size: 1.8rem;
         }
 
         select {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            background: #1a1a1a;
+            width: 80%; max-width: 280px;
+            padding: 15px; margin: 10px 0;
+            border-radius: 15px; 
             border: 2px solid var(--neon);
-            border-radius: 12px;
+            background: #1a1a1a; /* Темний фон, щоб було видно текст */
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
-        }
-
-        #startBtn {
-            width: 100%;
-            padding: 15px;
-            background: var(--neon);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 0 20px var(--neon);
             cursor: pointer;
         }
 
-        /* Основний екран */
-        #gameScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-            width: 100%;
-            opacity: 0;
+        /* Стиль для опцій всередині списку */
+        select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn {
+            width: 80%; max-width: 280px;
+            padding: 18px; margin: 15px 0;
+            border-radius: 50px; 
+            border: none;
+            background: var(--neon); 
+            color: white;
+            font-size: 1.2rem; 
+            font-weight: bold;
+            text-align: center; 
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--neon);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+            box-shadow: 0 0 10px var(--neon);
+        }
+
+        /* --- ГОЛОВНА ГРА --- */
+        .heart-box {
+            width: 170px; height: 170px;
+            filter: drop-shadow(0 0 20px var(--neon));
+            animation: breathe 3s infinite ease-in-out;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        svg { fill: var(--neon); width: 100%; height: 100%; }
+
+        @keyframes breathe { 
+            0%, 100% { transform: scale(1); } 
+            50% { transform: scale(1.1); } 
+        }
+
+        #wishText { 
+            margin-top: 50px; 
+            font-size: 1.4rem; 
+            text-align: center; 
+            text-shadow: 0 0 10px var(--neon); 
+            padding: 0 25px; 
+            min-height: 80px;
             transition: opacity 0.5s ease;
         }
 
-        .heart-box {
-            width: 180px;
-            height: 180px;
-            filter: drop-shadow(0 0 20px var(--neon));
-            animation: breathe 2.5s infinite ease-in-out;
-            cursor: pointer;
+        /* --- МОДАЛЬНЕ ВІКНО (ПРОМОКОД) --- */
+        #promoModal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -40%);
+            width: 85%; max-width: 340px;
+            background: rgba(26, 0, 26, 0.95); 
+            border: 3px solid var(--gold);
+            border-radius: 30px; 
+            padding: 30px;
+            text-align: center; 
+            z-index: 1000;
+            box-shadow: 0 0 50px var(--gold);
+            display: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        svg {
-            fill: var(--neon);
-            width: 100%;
-            height: 100%;
+        #promoModal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%);
         }
 
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--neon)); }
-            50% { transform: scale(1.08); filter: drop-shadow(0 0 30px var(--neon)); }
-        }
-
-        #wishText {
-            margin-top: 50px;
+        .promo-title { color: var(--gold); font-size: 1.6rem; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 10px gold; }
+        
+        .promo-code { 
+            font-size: 1.8rem; 
+            letter-spacing: 4px; 
+            background: rgba(255,215,0,0.1); 
+            padding: 12px; 
+            margin: 20px 0; 
+            border: 2px dashed var(--gold); 
             color: white;
-            font-size: 1.4rem;
-            text-align: center;
-            text-shadow: 0 0 10px var(--neon);
-            padding: 0 25px;
-            min-height: 3.5rem;
-            line-height: 1.4;
+            font-weight: bold;
         }
 
-        .hint {
-            position: absolute;
-            bottom: 40px;
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
+        .btn-gold { 
+            background: var(--gold); 
+            color: black; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--gold);
+        }
+
+        /* --- ІНСТРУКЦІЯ --- */
+        .tg-link { 
+            color: var(--gold); 
+            font-weight: bold; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 15px; 
+            font-size: 1.4rem;
+            text-shadow: 0 0 5px var(--gold);
         }
     </style>
 </head>
@@ -139,47 +192,64 @@
 
     <canvas id="bgCanvas"></canvas>
 
-    <div id="menu">
-        <div class="menu-card">
-            <h2>LANGUAGE</h2>
-            <select id="lang">
-                <option value="uk">Українська</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-                <option value="ja">日本語</option>
-                <option value="zh">中文</option>
-            </select>
-            <button id="startBtn">START</button>
-        </div>
+    <!-- ЕКРАН 1: МЕНЮ -->
+    <div id="menu" class="screen active">
+        <h2>ОБЕРИ МОВУ</h2>
+        <select id="lang">
+            <option value="uk">Українська</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="zh">中文</option>
+        </select>
+        <button class="btn" onclick="goToGame()">ПОЧАТИ</button>
     </div>
 
-    <div id="gameScreen">
+    <!-- ЕКРАН 2: ГРА -->
+    <div id="gameScreen" class="screen">
         <div class="heart-box" id="heartBtn">
             <svg viewBox="0 0 32 32">
                 <path d="M16 28.5c-0.3 0-0.5-0.1-0.7-0.3-0.2-0.2-11.3-10.8-11.3-17.2 0-4.4 3.1-7.5 7.5-7.5 2.2 0 4 1 5.5 2.5 1.5-1.5 3.3-2.5 5.5-2.5 4.4 0 7.5 3.1 7.5 7.5 0 6.4-11.1 17-11.3 17.2-0.2 0.2-0.4 0.3-0.7 0.3z"/>
             </svg>
         </div>
         <div id="wishText"></div>
-        <div class="hint">TAP TO FEEL LOVE</div>
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО -->
+    <div id="promoModal">
+        <div class="promo-title">🎁 СЮРПРИЗ!</div>
+        <p>Ти виграла промокод на 1 наліпку будь-якого розміру!</p>
+        <div class="promo-code">1GH5TR8</div>
+        <button class="btn-gold" onclick="goToInstruction()">ЯК ВИКОРИСТАТИ?</button>
+    </div>
+
+    <!-- ЕКРАН 3: ІНСТРУКЦІЯ -->
+    <div id="instructionScreen" class="screen">
+        <div style="text-align: center; padding: 20px;">
+            <h2 style="color: var(--gold);">ІНСТРУКЦІЯ</h2>
+            <p>Скопіюй цей промокод:</p>
+            <div class="promo-code">1GH5TR8</div>
+            <p>та надішли його в Telegram:</p>
+            <a href="https://t.me/youtuber_simdom" class="tg-link">@youtuber_simdom</a>
+            <br><br>
+            <button class="btn" onclick="location.reload()">НАЗАД</button>
+        </div>
     </div>
 
 <script>
     const config = {
-        uk: { wishes: ["Ти найкраща матуся! ❤️", "Люблю тебе дуже! ✨", "Дякую за все, що ти робиш! 🌸", "Будь завжди щасливою! 💖"], tap: "Торкнись серця..." },
-        en: { wishes: ["You are the best mom! ❤️", "I love you so much! ✨", "Thanks for everything! 🌸", "Stay happy always! 💖"], tap: "Touch the heart..." },
-        de: { wishes: ["Beste Mama der Welt! ❤️", "Ich liebe dich sehr! ✨", "Danke für alles! 🌸", "Sei immer glücklich! 💖"], tap: "Berühre das Herz..." },
-        ja: { wishes: ["最高のお母さん！ ❤️", "大好きだよ！ ✨", "いつもありがとう！ 🌸", "幸せでいてね！ 💖"], tap: "ハートに触れて..." },
-        zh: { wishes: ["你是最好的妈妈！ ❤️", "我非常爱你！ ✨", "谢谢你所做的一切！ 🌸", "祝你永远快乐！ 💖"], tap: "触摸心..." }
+        uk: { wishes: ["Ти найкраща матуся! ❤️", "Люблю тебе дуже! ✨", "Ти мій всесвіт! 🌸", "Будь найщасливішою! 💖"], tap: "Торкнись серця..." },
+        en: { wishes: ["You're the best mom! ❤️", "Love you so much! ✨", "You're my universe! 🌸", "Stay happy always! 💖"], tap: "Touch the heart..." },
+        de: { wishes: ["Beste Mama! ❤️", "Ich liebe dich sehr! ✨", "Du bist mein Universum! 🌸", "Sei glücklich! 💖"], tap: "Berühre das Herz..." },
+        ja: { wishes: ["最高のお母さん！ ❤️", "大好きだよ！ ✨", "お母さんは私の宇宙！ 🌸", "幸せに！ 💖"], tap: "ハートに触れて..." },
+        zh: { wishes: ["你是最好的妈妈！ ❤️", "我爱你！ ✨", "你是我的宇宙！ 🌸", "祝你快乐！ 💖"], tap: "触摸心..." }
     };
 
-    const menu = document.getElementById('menu');
-    const gameScreen = document.getElementById('gameScreen');
-    const startBtn = document.getElementById('startBtn');
-    const heartBtn = document.getElementById('heartBtn');
-    const wishText = document.getElementById('wishText');
-    const langSelect = document.getElementById('lang');
+    let clickCount = 0;
+    const promoLimit = 6; // Рівно на 6-й клік
+    let promoGiven = false;
 
-    // --- КАНВАС (Анімований фон) ---
+    // --- КАНВАС ---
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -197,23 +267,13 @@
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.size = Math.random() * 2 + 1;
-            this.speed = Math.random() * 0.5 + 0.2;
+            this.speed = Math.random() * 0.4 + 0.1;
             this.opacity = Math.random() * 0.5;
         }
-        update() {
-            this.y += this.speed;
-            if (this.y > canvas.height) this.y = -10;
-        }
-        draw() {
-            ctx.fillStyle = `rgba(255, 0, 85, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        update() { this.y += this.speed; if (this.y > canvas.height) this.y = -10; }
+        draw() { ctx.fillStyle = `rgba(255, 0, 85, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
     }
-
-    for(let i=0; i<60; i++) particles.push(new Particle());
-
+    for(let i=0; i<40; i++) particles.push(new Particle());
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => { p.update(); p.draw(); });
@@ -221,39 +281,58 @@
     }
     animate();
 
-    // --- ЛОГІКА ---
-    function start() {
-        menu.style.opacity = '0';
+    // --- ЛОГІКА ПЕРЕХОДІВ ---
+    function switchScreen(fromId, toId) {
+        document.getElementById(fromId).classList.remove('active');
         setTimeout(() => {
-            menu.style.display = 'none';
-            gameScreen.style.display = 'flex';
-            setTimeout(() => gameScreen.style.opacity = '1', 50);
-            const l = langSelect.value;
-            wishText.innerText = config[l].tap;
+            document.getElementById(toId).classList.add('active');
         }, 400);
     }
 
-    function showWish() {
-        const l = langSelect.value;
-        const wishes = config[l].wishes;
-        wishText.style.opacity = '0';
-        
-        setTimeout(() => {
-            wishText.innerText = wishes[Math.floor(Math.random() * wishes.length)];
-            wishText.style.opacity = '1';
-        }, 200);
-
-        heartBtn.style.transform = "scale(1.3)";
-        setTimeout(() => heartBtn.style.transform = "scale(1)", 100);
+    function goToGame() {
+        switchScreen('menu', 'gameScreen');
+        const lang = document.getElementById('lang').value;
+        document.getElementById('wishText').innerText = config[lang].tap;
     }
 
-    // Підтримка для всіх типів екранів
-    startBtn.addEventListener('click', start);
-    startBtn.addEventListener('touchstart', (e) => { e.preventDefault(); start(); });
+    function handleHeartClick() {
+        clickCount++;
+        const lang = document.getElementById('lang').value;
+        const wishes = config[lang].wishes;
+        
+        const wishEl = document.getElementById('wishText');
+        wishEl.style.opacity = '0';
+        
+        setTimeout(() => {
+            wishEl.innerText = wishes[Math.floor(Math.random() * wishes.length)];
+            wishEl.style.opacity = '1';
+            
+            if (clickCount >= promoLimit && !promoGiven) {
+                promoGiven = true;
+                setTimeout(showPromo, 800);
+            }
+        }, 300);
 
-    heartBtn.addEventListener('click', showWish);
-    heartBtn.addEventListener('touchstart', (e) => { e.preventDefault(); showWish(); });
+        const hb = document.getElementById('heartBtn');
+        hb.style.transform = "scale(1.3)";
+        setTimeout(() => hb.style.transform = "scale(1)", 150);
+    }
 
+    function showPromo() {
+        const modal = document.getElementById('promoModal');
+        modal.style.display = 'block';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function goToInstruction() {
+        document.getElementById('promoModal').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('promoModal').style.display = 'none';
+            switchScreen('gameScreen', 'instructionScreen');
+        }, 600);
+    }
+
+    document.getElementById('heartBtn').addEventListener('click', handleHeartClick);
 </script>
 </body>
 </html>
