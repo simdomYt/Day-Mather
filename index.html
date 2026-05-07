@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mother's Day Special ❤️</title>
+    <title>ATB Mother's Day Special ❤️</title>
     <style>
         :root {
             --neon: #ff0055;
             --gold: #ffd700;
+            --atb-red: #e30613;
             --bg: #050005;
             --transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -26,13 +27,29 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             color: white;
         }
 
         canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        /* --- ЕКРАНИ ТА АНІМАЦІЯ ПЕРЕХОДІВ --- */
+        /* --- ЛОГОТИП АТБ (ЯК НА ТРАФАРЕТІ) --- */
+        .atb-logo-fixed {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .atb-svg {
+            height: 55px;
+            fill: var(--atb-red);
+            filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));
+        }
+
+        /* --- ЕКРАНИ --- */
         .screen {
             position: absolute;
             width: 100%;
@@ -46,6 +63,7 @@
             transform: scale(1.1);
             transition: var(--transition);
             z-index: 10;
+            padding-top: 80px;
         }
 
         .screen.active {
@@ -54,12 +72,12 @@
             transform: scale(1);
         }
 
-        /* --- СТИЛІ ЕЛЕМЕНТІВ МЕНЮ --- */
         h2 { 
-            margin-bottom: 30px; 
+            margin-bottom: 25px; 
             text-shadow: 0 0 15px var(--neon); 
             letter-spacing: 2px; 
-            font-size: 1.8rem;
+            font-size: 1.7rem;
+            text-align: center;
         }
 
         select {
@@ -67,17 +85,10 @@
             padding: 15px; margin: 10px 0;
             border-radius: 15px; 
             border: 2px solid var(--neon);
-            background: #1a1a1a; /* Темний фон, щоб було видно текст */
+            background: #1a1a1a;
             color: white;
             font-size: 1.1rem;
             outline: none;
-            cursor: pointer;
-        }
-
-        /* Стиль для опцій всередині списку */
-        select option {
-            background: #1a1a1a;
-            color: white;
         }
 
         .btn {
@@ -89,56 +100,48 @@
             color: white;
             font-size: 1.2rem; 
             font-weight: bold;
-            text-align: center; 
             cursor: pointer;
             box-shadow: 0 0 20px var(--neon);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease;
         }
 
-        .btn:active {
-            transform: scale(0.92);
-            box-shadow: 0 0 10px var(--neon);
-        }
+        .btn:active { transform: scale(0.92); }
 
-        /* --- ГОЛОВНА ГРА --- */
+        /* --- СЕРЦЕ --- */
         .heart-box {
-            width: 170px; height: 170px;
+            width: 160px; height: 160px;
             filter: drop-shadow(0 0 20px var(--neon));
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
-            transition: transform 0.1s ease;
+            margin-top: 20px;
         }
+        .heart-svg { fill: var(--neon); width: 100%; height: 100%; }
 
-        svg { fill: var(--neon); width: 100%; height: 100%; }
-
-        @keyframes breathe { 
-            0%, 100% { transform: scale(1); } 
-            50% { transform: scale(1.1); } 
-        }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         #wishText { 
-            margin-top: 50px; 
-            font-size: 1.4rem; 
+            margin-top: 30px; 
+            font-size: 1.3rem; 
             text-align: center; 
             text-shadow: 0 0 10px var(--neon); 
-            padding: 0 25px; 
-            min-height: 80px;
+            padding: 0 20px; 
+            min-height: 70px;
             transition: opacity 0.5s ease;
         }
 
-        /* --- МОДАЛЬНЕ ВІКНО (ПРОМОКОД) --- */
+        /* --- МОДАЛКА --- */
         #promoModal {
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -40%);
             width: 85%; max-width: 340px;
-            background: rgba(26, 0, 26, 0.95); 
+            background: rgba(26, 0, 26, 0.98); 
             border: 3px solid var(--gold);
             border-radius: 30px; 
-            padding: 30px;
+            padding: 25px;
             text-align: center; 
-            z-index: 1000;
-            box-shadow: 0 0 50px var(--gold);
+            z-index: 3000;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
             display: none;
             opacity: 0;
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -150,40 +153,17 @@
             transform: translate(-50%, -50%);
         }
 
-        .promo-title { color: var(--gold); font-size: 1.6rem; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 10px gold; }
-        
         .promo-code { 
-            font-size: 1.8rem; 
-            letter-spacing: 4px; 
+            font-size: 1.7rem; letter-spacing: 4px; 
             background: rgba(255,215,0,0.1); 
-            padding: 12px; 
-            margin: 20px 0; 
+            padding: 10px; margin: 15px 0; 
             border: 2px dashed var(--gold); 
-            color: white;
-            font-weight: bold;
+            color: white; font-weight: bold;
         }
 
-        .btn-gold { 
-            background: var(--gold); 
-            color: black; 
-            border: none; 
-            padding: 15px; 
-            border-radius: 50px; 
-            font-weight: bold; 
-            width: 100%;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--gold);
-        }
-
-        /* --- ІНСТРУКЦІЯ --- */
         .tg-link { 
-            color: var(--gold); 
-            font-weight: bold; 
-            text-decoration: none; 
-            display: inline-block; 
-            margin-top: 15px; 
-            font-size: 1.4rem;
+            color: var(--gold); font-weight: bold; text-decoration: none; 
+            display: inline-block; margin-top: 10px; font-size: 1.3rem; 
             text-shadow: 0 0 5px var(--gold);
         }
     </style>
@@ -192,7 +172,14 @@
 
     <canvas id="bgCanvas"></canvas>
 
-    <!-- ЕКРАН 1: МЕНЮ -->
+    <div class="atb-logo-fixed">
+        <svg class="atb-svg" viewBox="0 0 220 80">
+            <path d="M32 0 L64 80 L48 80 L42 62 L22 62 L16 80 L0 80 L32 0 Z M32 18 L26 48 L38 48 Z" />
+            <path d="M75 0 L140 0 L140 16 L116 16 L116 80 L100 80 L100 16 L75 16 Z" />
+            <path d="M155 0 L210 0 L210 16 L171 16 L171 34 L205 34 C218 34 220 42 220 52 L220 60 C220 74 212 80 198 80 L155 80 Z M171 48 L171 66 L198 66 C203 66 206 63 206 59 C206 54 203 48 198 48 Z" />
+        </svg>
+    </div>
+
     <div id="menu" class="screen active">
         <h2>ОБЕРИ МОВУ</h2>
         <select id="lang">
@@ -205,35 +192,29 @@
         <button class="btn" onclick="goToGame()">ПОЧАТИ</button>
     </div>
 
-    <!-- ЕКРАН 2: ГРА -->
     <div id="gameScreen" class="screen">
         <div class="heart-box" id="heartBtn">
-            <svg viewBox="0 0 32 32">
+            <svg class="heart-svg" viewBox="0 0 32 32">
                 <path d="M16 28.5c-0.3 0-0.5-0.1-0.7-0.3-0.2-0.2-11.3-10.8-11.3-17.2 0-4.4 3.1-7.5 7.5-7.5 2.2 0 4 1 5.5 2.5 1.5-1.5 3.3-2.5 5.5-2.5 4.4 0 7.5 3.1 7.5 7.5 0 6.4-11.1 17-11.3 17.2-0.2 0.2-0.4 0.3-0.7 0.3z"/>
             </svg>
         </div>
         <div id="wishText"></div>
     </div>
 
-    <!-- МОДАЛЬНЕ ВІКНО -->
     <div id="promoModal">
-        <div class="promo-title">🎁 СЮРПРИЗ!</div>
-        <p>Ти виграла промокод на 1 наліпку будь-якого розміру!</p>
+        <div style="color:var(--atb-red); font-weight:bold; margin-bottom:10px;">SIMDOM SPECIAL</div>
+        <h3 style="color:var(--gold)">🎁 ВІТАЄМО!</h3>
+        <p style="font-size:0.9rem; margin-top:10px;">Ви виграли промокод на наліпку!</p>
         <div class="promo-code">1GH5TR8</div>
-        <button class="btn-gold" onclick="goToInstruction()">ЯК ВИКОРИСТАТИ?</button>
+        <button class="btn" style="padding:12px; width:100%" onclick="goToInstruction()">ЯК ЗАБРАТИ?</button>
     </div>
 
-    <!-- ЕКРАН 3: ІНСТРУКЦІЯ -->
     <div id="instructionScreen" class="screen">
-        <div style="text-align: center; padding: 20px;">
-            <h2 style="color: var(--gold);">ІНСТРУКЦІЯ</h2>
-            <p>Скопіюй цей промокод:</p>
-            <div class="promo-code">1GH5TR8</div>
-            <p>та надішли його в Telegram:</p>
-            <a href="https://t.me/youtuber_simdom" class="tg-link">@youtuber_simdom</a>
-            <br><br>
-            <button class="btn" onclick="location.reload()">НАЗАД</button>
-        </div>
+        <h2 style="color: var(--gold);">ІНСТРУКЦІЯ</h2>
+        <p>Напиши цей код у Telegram:</p>
+        <div class="promo-code">1GH5TR8</div>
+        <a href="https://t.me/youtuber_simdom" class="tg-link">@youtuber_simdom</a>
+        <button class="btn" style="margin-top:20px; background:#333;" onclick="location.reload()">НАЗАД</button>
     </div>
 
 <script>
@@ -245,94 +226,79 @@
         zh: { wishes: ["你是最好的妈妈！ ❤️", "我爱你！ ✨", "你是我的宇宙！ 🌸", "祝你快乐！ 💖"], tap: "触摸心..." }
     };
 
-    let clickCount = 0;
-    const promoLimit = 6; // Рівно на 6-й клік
-    let promoGiven = false;
+    let clicks = 0;
+    const limit = 6;
+    let done = false;
+    let lastWishIndex = -1; // Змінна для уникнення повторів
 
-    // --- КАНВАС ---
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
-
-    function initCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    let pts = [];
+    function init() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        pts = [];
+        for(let i=0; i<40; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2, o:Math.random()*0.5});
     }
-    window.addEventListener('resize', initCanvas);
-    initCanvas();
+    window.addEventListener('resize', init);
+    init();
 
-    class Particle {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 1;
-            this.speed = Math.random() * 0.4 + 0.1;
-            this.opacity = Math.random() * 0.5;
-        }
-        update() { this.y += this.speed; if (this.y > canvas.height) this.y = -10; }
-        draw() { ctx.fillStyle = `rgba(255, 0, 85, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    function draw() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(255, 0, 85, 0.4)";
+        pts.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+            p.y += 0.5; if(p.y > canvas.height) p.y = -5;
+        });
+        requestAnimationFrame(draw);
     }
-    for(let i=0; i<40; i++) particles.push(new Particle());
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-    animate();
+    draw();
 
-    // --- ЛОГІКА ПЕРЕХОДІВ ---
-    function switchScreen(fromId, toId) {
-        document.getElementById(fromId).classList.remove('active');
+    function goToGame() {
+        document.getElementById('menu').classList.remove('active');
         setTimeout(() => {
-            document.getElementById(toId).classList.add('active');
+            document.getElementById('gameScreen').classList.add('active');
+            const l = document.getElementById('lang').value;
+            document.getElementById('wishText').innerText = config[l].tap;
         }, 400);
     }
 
-    function goToGame() {
-        switchScreen('menu', 'gameScreen');
-        const lang = document.getElementById('lang').value;
-        document.getElementById('wishText').innerText = config[lang].tap;
-    }
+    document.getElementById('heartBtn').onclick = function() {
+        clicks++;
+        const l = document.getElementById('lang').value;
+        const w = config[l].wishes;
+        const txt = document.getElementById('wishText');
+        
+        // Логіка уникнення повторів
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * w.length);
+        } while (newIndex === lastWishIndex);
+        lastWishIndex = newIndex;
 
-    function handleHeartClick() {
-        clickCount++;
-        const lang = document.getElementById('lang').value;
-        const wishes = config[lang].wishes;
-        
-        const wishEl = document.getElementById('wishText');
-        wishEl.style.opacity = '0';
-        
+        txt.style.opacity = 0;
         setTimeout(() => {
-            wishEl.innerText = wishes[Math.floor(Math.random() * wishes.length)];
-            wishEl.style.opacity = '1';
-            
-            if (clickCount >= promoLimit && !promoGiven) {
-                promoGiven = true;
-                setTimeout(showPromo, 800);
-            }
-        }, 300);
+            txt.innerText = w[newIndex];
+            txt.style.opacity = 1;
+        }, 200);
 
-        const hb = document.getElementById('heartBtn');
-        hb.style.transform = "scale(1.3)";
-        setTimeout(() => hb.style.transform = "scale(1)", 150);
-    }
-
-    function showPromo() {
-        const modal = document.getElementById('promoModal');
-        modal.style.display = 'block';
-        setTimeout(() => modal.classList.add('show'), 10);
-    }
+        if(clicks >= limit && !done) {
+            done = true;
+            setTimeout(() => {
+                const m = document.getElementById('promoModal');
+                m.style.display = 'block';
+                setTimeout(() => m.classList.add('show'), 10);
+            }, 800);
+        }
+    };
 
     function goToInstruction() {
         document.getElementById('promoModal').classList.remove('show');
         setTimeout(() => {
             document.getElementById('promoModal').style.display = 'none';
-            switchScreen('gameScreen', 'instructionScreen');
-        }, 600);
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('instructionScreen').classList.add('active');
+        }, 500);
     }
-
-    document.getElementById('heartBtn').addEventListener('click', handleHeartClick);
 </script>
 </body>
 </html>
